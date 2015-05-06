@@ -5,7 +5,10 @@
 // Import the modules installed to our server
 var express = require('express');
 var bodyParser = require('body-parser');
+<<<<<<< HEAD
 var Speaker = require('./server/models/speaker');
+=======
+>>>>>>> origin/master
 
 // Start the Express Web Framework
 var app = express();
@@ -13,6 +16,7 @@ var app = express();
 // Configure the app
 app.use(bodyParser());
 
+<<<<<<< HEAD
 // Defining the Routes for our API
 var router = express.Router();
 
@@ -92,12 +96,15 @@ router.route('/speakers/:speaker_id')
     });
 app.use('/api', router);
 
+=======
+>>>>>>> origin/master
 // Where the Application will run
 var port = process.env.PORT || 8080;
 
 // Import Mongoose
 var mongoose = require('mongoose');
 
+<<<<<<< HEAD
 //var uri = 'mongodb://127.0.0.1/conference-api';
 mongoose.connect('mongodb://127.0.0.1/conference-api');
 //mongoose.connect('mongodb://username:password@kahana.mongohq.com:10072/node-api');
@@ -105,3 +112,5 @@ mongoose.connect('mongodb://127.0.0.1/conference-api');
 // Start the Node Server
 app.listen(port);
 console.log('Application is running at http://localhost:'+port+"/");
+=======
+>>>>>>> origin/master
