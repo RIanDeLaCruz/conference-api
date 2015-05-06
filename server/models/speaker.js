@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 // Set the data types, properties and default values
 var SpeakerSchema = new Schema({
     name:{
-        tyoe: String,
+        type: String,
         default: ''
     },
     company:{
