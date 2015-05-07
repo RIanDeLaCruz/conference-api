@@ -17,6 +17,14 @@ var MongoStore = require('connect-mongo')(session);
 
 var config = require('./server/config/config.js');
 
+// Database Connections
+mongoose.connect(config.url);
+
+// Check if MongoDB is running
+mongoose.connection.on('error', function(){
+    console.error('MongoDB Connection Error. Make sure MongoDB is running');
+});
+
 var app = express();
 
 require('.server/config/passport')(passport);
@@ -32,10 +40,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
-app.use('/users', users);
-app.use('/api/speakers', speakers);
 
 // flash warning messages
 app.use(flash());
@@ -56,13 +60,10 @@ app.use(session({
     })
 }));
 
-// Database Connections
-mongoose.connect(config.url);
+app.use('/', routes);
+app.use('/users', users);
+app.use('/api/speakers', speakers);
 
-// Check if MongoDB is running
-mongoose.connection.on('error', function(){
-    console.error('MongoDB Connection Error. Make sure MongoDB is running');
-});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
