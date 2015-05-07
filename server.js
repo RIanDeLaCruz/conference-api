@@ -46,7 +46,7 @@ app.use(passport.session());
 // required for passport
 // secret for session
 app.use(session({
-    secret: 'sometextgohere',
+    secret: 'SessionSecret',
     saveUninitialized: true,
     resave: true,
     //store session on MongoDB using express-session + connect mongo
