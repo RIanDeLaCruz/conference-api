@@ -12,6 +12,8 @@ var speakers = require('./server/routes/speakers');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
 var passport = require('passport');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 
 var config = require('./server/config/config.js');
 
@@ -41,6 +43,18 @@ app.use(flash());
 app.use(passport.initialize());
 // persistent login sessions
 app.use(passport.session());
+// required for passport
+// secret for session
+app.use(session({
+    secret: 'sometextgohere',
+    saveUninitialized: true,
+    resave: true,
+    //store session on MongoDB using express-session + connect mongo
+    store: new MongoStore({
+        url: config.url,
+        collection : 'sessions'
+    })
+}));
 
 // Database Connections
 mongoose.connect(config.url);
