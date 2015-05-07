@@ -7,6 +7,10 @@ var bodyParser = require('body-parser');
 
 var routes = require('./server/routes/index');
 var users = require('./server/routes/users');
+var speakers = require('./server/routes/speakers');
+
+var mongoose = require('mongoose');
+var config = require('./server/config/config.js');
 
 var app = express();
 
@@ -24,6 +28,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/api/speakers', speakers);
+
+// Database Connections
+mongoose.connect(config.url);
+
+// Check if MongoDB is running
+mongoose.connection.on('error', function(){
+    console.error('MongoDB Connection Error. Make sure MongoDB is running');
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
