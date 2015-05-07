@@ -10,9 +10,14 @@ var users = require('./server/routes/users');
 var speakers = require('./server/routes/speakers');
 
 var mongoose = require('mongoose');
+var flash = require('connect-flash');
+var passport = require('passport');
+
 var config = require('./server/config/config.js');
 
 var app = express();
+
+require('.server/config/passport')(passport);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'server/views'));
@@ -29,6 +34,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/api/speakers', speakers);
+
+// flash warning messages
+app.use(flash());
+// Init passport authentication
+app.use(passport.initialize());
+// persistent login sessions
+app.use(passport.session());
 
 // Database Connections
 mongoose.connect(config.url);
