@@ -1,105 +1,65 @@
-/**
- * Created by ian on 5/6/15.
- */
-
-// Import the modules installed to our server
 var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var Speaker = require('./server/models/speaker');
-// Start the Express Web Framework
+
+var routes = require('./server/routes/index');
+var users = require('./server/routes/users');
+
 var app = express();
 
-// Configure the app
-app.use(bodyParser());
-// Defining the Routes for our API
-var router = express.Router();
+// view engine setup
+app.set('views', path.join(__dirname, 'server/views'));
+app.set('view engine', 'ejs');
 
-// Start the Router
-router.use(function(req, res, next){
-    console.log('An action was performed by the server.');
-    next();
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', routes);
+app.use('/users', users);
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
-router.get('/', function(req, res){
-    res.json({
-        message: 'Hello SPA. The application is working'
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function (err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
     });
 });
 
-router.route('/speakers')
-    .post(function(req, res){
-        var speaker = new Speaker();
 
-        speaker.name = req.body.name;
-        speaker.company = req.body.company;
-        speaker.title = req.body.title;
-        speaker.description = req.body.description;
-        speaker.picture = req.body.picture;
-        speaker.schedule = req.body.schedule;
+module.exports = app;
 
-        speaker.save(function(err){
-            if(err) res.send(err);
-            res.json({
-                message: 'Speaker successfully added.'
-            });
-        });
-    })
-    .get(function(req, res){
-        Speaker.find(function(err, speakers){
-            if (err) res.send(err);
-            res.json(speakers);
-        })
-    });
-
-router.route('/speakers/:speaker_id')
-    .get(function(req, res){
-        Speaker.findById(req.params.speaker_id, function(err, speaker){
-            if (err) res.send(err);
-            res.json(speaker);
-        });
-    })
-    .put(function(req, res){
-        Speaker.findById(req.params.speaker_id, function(err, speaker){
-            if (err) res.send(err);
-
-            // Set the speaker properties
-            speaker.name = req.body.name;
-            speaker.company = req.body.company;
-            speaker.title = req.body.title;
-            speaker.description = req.body.description;
-            speaker.picture = req.body.picture;
-            speaker.schedule = req.body.schedule;
-
-            speaker.save(function(err){
-                if(err) res.send(err);
-                res.json({
-                    message: 'Speaker successfully updated'
-                });
-            });
-        })
-    })
-    .delete(function(req, res){
-        Speaker.remove({
-            _id:req.params.speaker_id
-        }, function(err, speaker){
-            if(err) res.send(err);
-            res.json({
-                message: 'Speaker successfully removed'
-            });
-        });
-    });
-app.use('/api', router);
-
-// Where the Application will run
-var port = process.env.PORT || 8080;
-
-// Import Mongoose
-var mongoose = require('mongoose');
-
-//var uri = 'mongodb://127.0.0.1/conference-api';
-mongoose.connect('mongodb://127.0.0.1/conference-api');
-//mongoose.connect('mongodb://username:password@kahana.mongohq.com:10072/node-api');
-
-// Start the Node Server
-app.listen(port);
-console.log('Application is running at http://localhost:'+port+"/");
+app.set('port', process.env.PORT || 3000);
+var server = app.listen(app.get('port'), function () {
+    console.log('Express server listening ' + server.address().port);
+});
