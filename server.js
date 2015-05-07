@@ -27,7 +27,7 @@ mongoose.connection.on('error', function(){
 
 var app = express();
 
-require('.server/config/passport')(passport);
+require('./server/config/passport')(passport);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'server/views'));
